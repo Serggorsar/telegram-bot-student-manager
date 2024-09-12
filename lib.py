@@ -1,5 +1,6 @@
 import logging
 import re
+from aiogram.types import Message
 
 
 # Настройка логирования
@@ -28,3 +29,26 @@ def re_rsplit(pattern, text, maxsplit):
             break                                # ...match count equals max split value
     result.append(text[:prev])                   # Append the text chunk from start
     return list(reversed(result))                # Return reversed list
+
+
+# Функция для отправки длинных сообщений, разбивая их по строкам."
+async def send_long_message(message: Message, text: str):
+    lines = text.split('\n')
+    chunk_size = 3072  # Максимальный размер одного сообщения
+    current_chunk = ""
+
+    for line in lines:
+        # Если добавление очередной строки превысит лимит, отправляем сообщение
+        if len(current_chunk) + len(line) + 1 > chunk_size:
+            await message.answer(current_chunk)
+            current_chunk = line  # Начинаем новый блок с текущей строки
+        else:
+            # Добавляем строку в текущий блок
+            if current_chunk:
+                current_chunk += "\n" + line
+            else:
+                current_chunk = line
+
+    # Отправляем оставшийся текст
+    if current_chunk:
+        await message.answer(current_chunk)
