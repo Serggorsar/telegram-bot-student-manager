@@ -27,7 +27,7 @@ async def student_welcome(message: Message):
     welcome_text = (
         "Приветствую! Я бот для управления логинами и паролями студентов.\n\n"
         "Отправьте своё ФИО в формате Фамилия Имя Отчество, чтобы получить логин и пароль.\n"
-        "Если возникли проблемы или вы не нашли свою запись, обратитесь к лектору: {lector}"
+        "Если возникли проблемы или вы не нашли свою запись, обратитесь к лектору: @{lector}"
     ).format(lector=SUPERADMIN_USERNAME)
     await message.answer(welcome_text)
     await Form.check_fio.set()
