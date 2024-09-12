@@ -45,7 +45,7 @@ async def list_all_students(message: types.Message):
     students = await get_all_students()
     if students:
         result = '\n'.join([f"{s[0]} - Логин: {s[1]}, Пароль: {s[2]}, Программа: {s[3]}, Телеграм: {s[4]}" for s in students])
-        await message.answer(f"Список всех студентов:\n{result}")
+        await message.answer(f"Список всех студентов:\n{result[:4000]}")
     else:
         await message.answer("Студенты не найдены.")
 
@@ -272,7 +272,7 @@ async def process_users_file(message: types.Message, state: FSMContext):
             await add_student(full_name, login, password, program)
             results.append(f"Пользователь {full_name} добавлен.")
 
-    await message.answer('\n'.join(results))
+    await message.answer('\n'.join(results)[:4000])
     await state.finish()
 
 
@@ -292,7 +292,7 @@ async def process_list_program(message: types.Message, state: FSMContext):
     students = await get_students_by_program(program)
     if students:
         result = '\n'.join([f"{s[0]} - Логин: {s[1]}, Пароль: {s[2]}, Телеграм: {s[3]}" for s in students])
-        await message.answer(f"Студенты программы {program}:\n{result}")
+        await message.answer(f"Студенты программы {program}:\n{result[:4000]}")
     else:
         await message.answer(f"Студенты по программе {program} не найдены.")
 
