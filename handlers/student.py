@@ -28,7 +28,7 @@ async def process_fio_check(message: types.Message, state: FSMContext):
 
         await message.answer("Ваш Telegram ID сохранен в базе данных.")
     else:
-        await message.answer(f"Запись с ФИО {full_name} не найдена. Пожалуйста, обратитесь к лектору: {SUPERADMIN_USERNAME}")
+        await message.answer(f"Запись с ФИО {full_name} не найдена. Пожалуйста, обратитесь к лектору: @{SUPERADMIN_USERNAME}")
 
     await message.answer("Чтобы воспользоваться ботом снова, нажмите /start.")
     await state.finish()
