@@ -334,7 +334,14 @@ async def _health(request):
 async def _on_startup(app: web.Application):
     # база + запуск polling в фоне
     await init_db(SUPERADMIN_USERNAME)
-    app['poller'] = asyncio.create_task(dp.start_polling(skip_updates=True))
+    # сначала явно дропнем накопившиеся апдейты
+    try:
+        dropped = await dp.skip_updates()
+        logger.info("Skipped %s pending updates", dropped)
+    except Exception as e:
+        logger.warning("Could not skip updates: %s", e)
+    # теперь запускаем polling как таск
+    app['poller'] = asyncio.create_task(dp.start_polling())
     logger.info("Polling started")
 
 async def _on_cleanup(app: web.Application):
