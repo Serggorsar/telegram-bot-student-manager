@@ -5,6 +5,8 @@ import re
 import asyncio
 import logging
 import contextlib
+import inspect
+import functools
 
 from aiohttp import web
 from aiogram import Bot, Dispatcher, types
@@ -56,13 +58,19 @@ async def _notify_superadmin(text: str):
 # --- access control decorator ---
 
 def admin_only(handler):
+    @functools.wraps(handler)
     async def wrapped(message: types.Message, *args, **kwargs):
         username = (message.from_user.username or "").lstrip("@")
         if username == SUPERADMIN_USERNAME or await is_admin(username):
-            return await handler(message, *args, **kwargs)
+            # Оставляем только те kwargs, которые есть в сигнатуре handler'а
+            sig = inspect.signature(handler)
+            allowed = {name for name in sig.parameters.keys()}
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k in allowed}
+            return await handler(message, *args, **filtered_kwargs)
         else:
             await message.answer("У вас нет прав доступа для выполнения этой команды.")
     return wrapped
+
 
 # --- commands ---
 
